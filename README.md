@@ -12,3 +12,4 @@ document.
 
 - Update version in package.json, manifest.json, and versions.json
 - Create release in Github
+- Build app and attach `main.js` and `manifest.json` to release.
