@@ -17,6 +17,7 @@ export default class ChecklistReset extends Plugin {
           const currentValue = view.getViewData()
           const newValue = resetChecklistItems(currentValue);
           view.setViewData(newValue, false);
+          view.save()
         }
       },
     });
