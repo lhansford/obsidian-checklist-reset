@@ -1,5 +1,5 @@
 const CHECK_REGEX = " \\[.{1}\\])";
-const LIST_SYMBOLS = ["-", "*"];
+const LIST_SYMBOLS = ["-", "*", "+"];
 
 export function resetChecklistItems(content: string): string {
   return LIST_SYMBOLS.reduce((value, listSymbol) => {

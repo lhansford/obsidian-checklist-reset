@@ -12,6 +12,7 @@ describe("resetChecklistItems", () => {
     it("Should return the text with no changes", () => {
       expect(resetChecklistItems("- [ ]")).toBe("- [ ]");
       expect(resetChecklistItems("* [ ]")).toBe("* [ ]");
+      expect(resetChecklistItems("+ [ ]")).toBe("+ [ ]");
     });
   });
 
@@ -19,6 +20,7 @@ describe("resetChecklistItems", () => {
     it("Should return the text with the checklist items unchecked", () => {
       expect(resetChecklistItems("- [x]")).toBe("- [ ]");
       expect(resetChecklistItems("* [x]")).toBe("* [ ]");
+      expect(resetChecklistItems("+ [x]")).toBe("+ [ ]");
       expect(resetChecklistItems("- [?]")).toBe("- [ ]");
       expect(resetChecklistItems("- [X]")).toBe("- [ ]");
       expect(resetChecklistItems("- [/]")).toBe("- [ ]");
