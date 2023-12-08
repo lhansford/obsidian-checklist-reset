@@ -4,9 +4,12 @@ This plugin adds a command to reset the state of any checklists in a document in
 
 ## Usage
 
-From a document containing a checklist with checked items access the Command Palette and select
-`Checklist Reset: Reset checklists`. This will uncheck all checked checklist items in the open
-document.
+This plugin adds the following commanfs to the Command Palette:
+
+| Command name     | Description                                              |
+|------------------|----------------------------------------------------------|
+| Reset checklists | Uncheck all checked checklist items in the open document.|
+| Check all        | Check all unchecked checklist items in the open document.|
 
 ## Development
 
@@ -19,11 +22,11 @@ document.
 ### Developing locally
 
 1. `npm run dev`
-2. `mv ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js.bak`
-3. `ln -s /Users/luke/Documents/Development/obsidian-checklist-reset/main.js ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js`
+2. `mv ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js.bak`
+3. `ln -s /Users/luke/Documents/Development/obsidian-checklist-reset/main.js ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js`
 4. Reload plugin in Obsidian
 
 To revert:
 
-1. `rm ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js`
-2. `mv ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js.bak ~/Dropbox/notes/.obsidian/plugins/obsidian-checklist-reset/main.js`
+1. `rm ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js`
+2. `mv ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js.bak ~/Obsidian/Personal/.obsidian/plugins/obsidian-checklist-reset/main.js`
