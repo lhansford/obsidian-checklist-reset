@@ -1,6 +1,6 @@
 const CHECK_REGEX = " \\[.{1}\\])";
 const UNCHECKED_REGEX = " \\[ \\])";
-const LIST_SYMBOLS = ["-", "*", "+"];
+const LIST_SYMBOLS = ["-", "*", "+", "."];
 
 export function setChecklistItems(content: string, checked = false): string {
   const newValue = checked ? '[x]' : '[ ]'
