@@ -1,13 +1,42 @@
-const CHECK_REGEX = " \\[.{1}\\])";
+import { removeText } from "./removeText";
+import { ChecklistResetSettings } from "./types";
+
+export type SetAction = "check" | "uncheck";
+
+const CHECK_REGEX = " \\[[^ ]\\])";
 const UNCHECKED_REGEX = " \\[ \\])";
+const LIST_ITEM_START_REGEX = "^ *\\d*"; // i.e. start of line, zero or more spaces, zero or more digits (for ordered lists)
 const LIST_SYMBOLS = ["-", "*", "+", "."];
 
-export function setChecklistItems(content: string, checked = false): string {
-  const newValue = checked ? '[x]' : '[ ]'
-  const checkboxRegex = checked ? UNCHECKED_REGEX : CHECK_REGEX;
+export function setChecklistItems(
+  content: string,
+  { deleteTextOnReset }: ChecklistResetSettings,
+  action: SetAction = 'uncheck'
+): string {
+  const newValue = action === 'check' ? "[x]" : "[ ]";
+  const checkboxRegex = action === 'check' ? UNCHECKED_REGEX : CHECK_REGEX;
 
-  return LIST_SYMBOLS.reduce((value, listSymbol) => {
-    const regex = new RegExp(`(\\${listSymbol}${checkboxRegex}`, "g");
-    return value.replaceAll(regex, `${listSymbol} ${newValue}`);
-  }, content);
+  return content.split("\n").map((line) => {
+    const matchedListSymbol = LIST_SYMBOLS.find((listSymbol) => {
+      const regex = new RegExp(`${LIST_ITEM_START_REGEX}(\\${listSymbol}${checkboxRegex}`, "g");
+      if (regex.test(line)) {
+        return listSymbol;
+      }
+    });
+
+    if (matchedListSymbol) {
+      let transformedLine = line;
+      if (deleteTextOnReset && deleteTextOnReset !== "" && action === 'uncheck') {
+
+          transformedLine = removeText(line, deleteTextOnReset);
+
+      }
+      return transformedLine.replace(
+        new RegExp(`(\\${matchedListSymbol}${checkboxRegex}`, "g"),
+        `${matchedListSymbol} ${newValue}`
+      );
+    }
+
+    return line;
+  }).join("\n");
 }
