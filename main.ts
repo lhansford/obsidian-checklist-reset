@@ -1,16 +1,32 @@
-import { MarkdownView, Plugin } from "obsidian";
+import { App, MarkdownView, Plugin, PluginSettingTab, Setting } from "obsidian";
 
-import { setChecklistItems } from "./src/setChecklistItems";
+import { SetAction, setChecklistItems } from "./src/setChecklistItems";
+import { ChecklistResetSettings } from "src/types";
 
-function handleAction(view: MarkdownView, checked = false) {
+const DEFAULT_SETTINGS: ChecklistResetSettings = { deleteTextOnReset: "" };
+
+function handleAction(view: MarkdownView, settings: ChecklistResetSettings, action: SetAction) {
   const currentValue = view.getViewData();
-  const newValue = setChecklistItems(currentValue, checked);
+  const newValue = setChecklistItems(currentValue, settings, action);
   view.setViewData(newValue, false);
   view.save();
 }
 
 export default class ChecklistReset extends Plugin {
+  settings: ChecklistResetSettings;
+
+  async loadSettings() {
+    this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
+  }
+
   async onload() {
+    await this.loadSettings();
+    this.addSettingTab(new ChecklistResetSettingTab(this.app, this));
+
     this.addCommand({
       id: "checklist-reset",
       name: "Reset checklists",
@@ -21,7 +37,7 @@ export default class ChecklistReset extends Plugin {
 
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          handleAction(view);
+          handleAction(view, this.settings, 'uncheck');
         }
       },
     });
@@ -35,9 +51,37 @@ export default class ChecklistReset extends Plugin {
 
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          handleAction(view, true);
+          handleAction(view, this.settings, 'check');
         }
       },
     });
+  }
+}
+
+export class ChecklistResetSettingTab extends PluginSettingTab {
+  plugin: ChecklistReset;
+
+  constructor(app: App, plugin: ChecklistReset) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+
+  display(): void {
+    const { containerEl } = this;
+
+    containerEl.empty();
+
+    new Setting(containerEl)
+      .setName('Delete text on reset')
+      .setDesc('A regex or string. When resetting a checklist item any text matching this will be deleted.')
+      .addText((text) =>
+        text
+          .setPlaceholder('TODO:?')
+          .setValue(this.plugin.settings.deleteTextOnReset)
+          .onChange(async (value) => {
+            this.plugin.settings.deleteTextOnReset = value;
+            await this.plugin.saveSettings();
+          })
+      );
   }
 }
