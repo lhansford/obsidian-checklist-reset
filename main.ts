@@ -82,7 +82,7 @@ export class ChecklistResetSettingTab extends PluginSettingTab {
       )
       .addText((text) =>
         text
-          .setPlaceholder("TODO:?")
+          .setPlaceholder("/ ✅ \\d{4}-\\d{2}-\\d{2}.*/g")
           .setValue(this.plugin.settings.deleteTextOnReset)
           .onChange(async (value) => {
             this.plugin.settings.deleteTextOnReset = value;

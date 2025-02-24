@@ -6,7 +6,7 @@ describe('removeText', () => {
   describe('With a regex', () => {
     it('should remove all instances of the regex', () => {
       const text = 'Hello, World!';
-      const result = removeText(text, "/l{2}/g");
+      const result = removeText(text, /l{2}/g);
       expect(result).toBe('Heo, World!');
     });
   });
@@ -24,14 +24,6 @@ describe('removeText', () => {
     it('should return the original text', () => {
       const text = 'Hello, World!';
       const result = removeText(text, '');
-      expect(result).toBe(text);
-    });
-  });
-
-  describe('Without a regex or string', () => {
-    it('should return the original text', () => {
-      const text = 'Hello, World!';
-      const result = removeText(text);
       expect(result).toBe(text);
     });
   });

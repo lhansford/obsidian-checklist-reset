@@ -8,6 +8,15 @@ const UNCHECKED_REGEX = " \\[ \\])";
 const LIST_ITEM_START_REGEX = "^[ \t]*\\d*"; // i.e. start of line, zero or more spaces, zero or more digits (for ordered lists)
 const LIST_SYMBOLS = ["-", "*", "+", "."];
 
+function getDeleteTextOnResetPattern(pattern?: string): string | RegExp | undefined {
+  if (!pattern || pattern === "") {
+    return undefined;
+  }
+  const match = pattern.match(new RegExp('^/(.*?)/([gimy]*)$'));
+  console.log({ pattern, match })
+  return match ? new RegExp(match[1], match[2]) : pattern;
+}
+
 export function setChecklistItems(
   content: string,
   { deleteTextOnReset }: ChecklistResetSettings,
@@ -15,6 +24,8 @@ export function setChecklistItems(
 ): string {
   const newValue = action === "check" ? "[x]" : "[ ]";
   const checkboxRegex = action === "check" ? UNCHECKED_REGEX : CHECK_REGEX;
+
+  const deleteTextOnResetPattern = getDeleteTextOnResetPattern(deleteTextOnReset);
 
   return content
     .split("\n")
@@ -32,11 +43,10 @@ export function setChecklistItems(
       if (matchedListSymbol) {
         let transformedLine = line;
         if (
-          deleteTextOnReset &&
-          deleteTextOnReset !== "" &&
+          deleteTextOnResetPattern &&
           action === "uncheck"
         ) {
-          transformedLine = removeText(line, deleteTextOnReset);
+          transformedLine = removeText(line, deleteTextOnResetPattern);
         }
         return transformedLine.replace(
           new RegExp(`(\\${matchedListSymbol}${checkboxRegex}`, "g"),
