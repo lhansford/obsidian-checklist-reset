@@ -52,6 +52,8 @@ describe("setChecklistItems", () => {
     describe("With text with checked checklist items", () => {
       it("Should return the text with the checklist items unchecked", () => {
         expect(setChecklistItems("- [x]", DEFAULT_SETTINGS)).toBe("- [ ]");
+        expect(setChecklistItems("  - [x]", DEFAULT_SETTINGS)).toBe("  - [ ]");
+        expect(setChecklistItems("\t- [x]", DEFAULT_SETTINGS)).toBe("\t- [ ]");
         expect(setChecklistItems("* [x]", DEFAULT_SETTINGS)).toBe("* [ ]");
         expect(setChecklistItems("+ [x]", DEFAULT_SETTINGS)).toBe("+ [ ]");
         expect(setChecklistItems("- [?]", DEFAULT_SETTINGS)).toBe("- [ ]");

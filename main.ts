@@ -5,7 +5,11 @@ import { ChecklistResetSettings } from "src/types";
 
 const DEFAULT_SETTINGS: ChecklistResetSettings = { deleteTextOnReset: "" };
 
-function handleAction(view: MarkdownView, settings: ChecklistResetSettings, action: SetAction) {
+function handleAction(
+  view: MarkdownView,
+  settings: ChecklistResetSettings,
+  action: SetAction
+) {
   const currentValue = view.getViewData();
   const newValue = setChecklistItems(currentValue, settings, action);
   view.setViewData(newValue, false);
@@ -37,7 +41,7 @@ export default class ChecklistReset extends Plugin {
 
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          handleAction(view, this.settings, 'uncheck');
+          handleAction(view, this.settings, "uncheck");
         }
       },
     });
@@ -51,7 +55,7 @@ export default class ChecklistReset extends Plugin {
 
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          handleAction(view, this.settings, 'check');
+          handleAction(view, this.settings, "check");
         }
       },
     });
@@ -72,11 +76,13 @@ export class ChecklistResetSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName('Delete text on reset')
-      .setDesc('A regex or string. When resetting a checklist item any text matching this will be deleted.')
+      .setName("Delete text on reset")
+      .setDesc(
+        "A regex or string. When resetting a checklist item any text matching this will be deleted."
+      )
       .addText((text) =>
         text
-          .setPlaceholder('TODO:')
+          .setPlaceholder("TODO:?")
           .setValue(this.plugin.settings.deleteTextOnReset)
           .onChange(async (value) => {
             this.plugin.settings.deleteTextOnReset = value;
