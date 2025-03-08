@@ -5,7 +5,7 @@ export type SetAction = "check" | "uncheck";
 
 const CHECK_REGEX = " \\[[^ ]\\])";
 const UNCHECKED_REGEX = " \\[ \\])";
-const LIST_ITEM_START_REGEX = "^[ \t]*\\d*"; // i.e. start of line, zero or more spaces, zero or more digits (for ordered lists)
+const LIST_ITEM_START_REGEX = "^[ \t]*(> )*\\d*"; // i.e. start of line, zero or more spaces, callouts, zero or more digits (for ordered lists)
 const LIST_SYMBOLS = ["-", "*", "+", "."];
 
 function getDeleteTextOnResetPattern(pattern?: string): string | RegExp | undefined {

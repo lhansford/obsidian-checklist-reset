@@ -40,6 +40,9 @@ describe("setChecklistItems", () => {
         expect(setChecklistItems("0. [ ]", DEFAULT_SETTINGS)).toBe("0. [ ]");
         expect(setChecklistItems("1. [ ]", DEFAULT_SETTINGS)).toBe("1. [ ]");
         expect(setChecklistItems("10. [ ]", DEFAULT_SETTINGS)).toBe("10. [ ]");
+        expect(setChecklistItems("> - [ ]", DEFAULT_SETTINGS)).toBe("> - [ ]");
+        expect(setChecklistItems("> 10. [ ]", DEFAULT_SETTINGS)).toBe("> 10. [ ]");
+        expect(setChecklistItems("> > - [ ]", DEFAULT_SETTINGS)).toBe("> > - [ ]");
       });
 
       describe("With a value set for deleteTextOnReset", () => {
@@ -64,6 +67,9 @@ describe("setChecklistItems", () => {
         expect(setChecklistItems("1. [x]", DEFAULT_SETTINGS)).toBe("1. [ ]");
         expect(setChecklistItems("10. [x]", DEFAULT_SETTINGS)).toBe("10. [ ]");
         expect(setChecklistItems("  10. [x] also dont remove checks later on - [x] ?", DEFAULT_SETTINGS)).toBe("  10. [ ] also dont remove checks later on - [x] ?");
+        expect(setChecklistItems("> - [x]", DEFAULT_SETTINGS)).toBe("> - [ ]");
+        expect(setChecklistItems("> 10. [x]", DEFAULT_SETTINGS)).toBe("> 10. [ ]");
+        expect(setChecklistItems("> > - [x]", DEFAULT_SETTINGS)).toBe("> > - [ ]");
       });
 
       describe("With a value set for deleteTextOnReset", () => {
