@@ -1,19 +1,40 @@
-import { App, MarkdownView, Plugin, PluginSettingTab, Setting } from "obsidian";
+import {
+  App,
+  MarkdownView,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+  TextFileView,
+} from "obsidian";
 
-import { SetAction, setChecklistItems } from "./src/setChecklistItems";
+import { SetAction } from "./src/setChecklistItems";
 import { ChecklistResetSettings } from "src/types";
+import { handleCanvasAction } from "src/handleCanvasAction";
+import { handleMarkdownAction } from "src/handleMarkdownAction";
 
 const DEFAULT_SETTINGS: ChecklistResetSettings = { deleteTextOnReset: "" };
 
 function handleAction(
-  view: MarkdownView,
+  app: App,
+  view: TextFileView,
   settings: ChecklistResetSettings,
   action: SetAction
 ) {
-  const currentValue = view.getViewData();
-  const newValue = setChecklistItems(currentValue, settings, action);
-  view.setViewData(newValue, false);
-  view.save();
+  if (view.file.extension === "canvas") {
+    handleCanvasAction(app, view, settings, action);
+  } else {
+    handleMarkdownAction(view as MarkdownView, settings, action);
+  }
+}
+
+function isSupportedView(app: App, editorOnly = false): boolean {
+  const view = app.workspace.getActiveViewOfType(TextFileView);
+  const isSupportedView =
+    view?.file.extension === "canvas" || view instanceof MarkdownView;
+  if (isSupportedView && editorOnly && view instanceof MarkdownView) {
+    return (view.currentMode as any).type === "source";
+  }
+  return isSupportedView;
 }
 
 export default class ChecklistReset extends Plugin {
@@ -35,27 +56,66 @@ export default class ChecklistReset extends Plugin {
       id: "checklist-reset",
       name: "Reset checklists",
       checkCallback: (checking: boolean) => {
+        console.log(this.app.workspace.getActiveViewOfType(TextFileView));
         if (checking) {
-          return !!this.app.workspace.getActiveViewOfType(MarkdownView);
+          return isSupportedView(this.app);
         }
 
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const view = this.app.workspace.getActiveViewOfType(TextFileView);
         if (view) {
-          handleAction(view, this.settings, "uncheck");
+          handleAction(this.app, view, this.settings, "uncheck");
         }
       },
     });
+
     this.addCommand({
       id: "checklist-check-all",
       name: "Check all",
       checkCallback: (checking: boolean) => {
         if (checking) {
-          return !!this.app.workspace.getActiveViewOfType(MarkdownView);
+          return isSupportedView(this.app);
         }
 
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const view = this.app.workspace.getActiveViewOfType(TextFileView);
         if (view) {
-          handleAction(view, this.settings, "check");
+          handleAction(this.app, view, this.settings, "check");
+        }
+      },
+    });
+
+    this.addCommand({
+      id: "checklist-reset-selected",
+      name: "Reset selected checklists",
+      checkCallback: (checking: boolean) => {
+        if (checking) {
+          // Editor mode is required as we cannot select text with checkboxes properly in preview mode.
+          return isSupportedView(this.app, true);
+        }
+
+        const view = this.app.workspace.getActiveViewOfType(TextFileView);
+
+        if (view?.file.extension === "canvas") {
+          const selectedNodes = (view as any).canvas.selection as Set<unknown>;
+          const selectedNodeIds = [...selectedNodes].map(
+            (node: { id: string }) => node.id
+          );
+          handleCanvasAction(
+            this.app,
+            view,
+            this.settings,
+            "uncheck",
+            selectedNodeIds
+          );
+        } else if (view instanceof MarkdownView) {
+          const selectedText = view.editor.listSelections();
+          if (selectedText.length > 0) {
+            handleMarkdownAction(
+              view,
+              this.settings,
+              "uncheck",
+              selectedText[0]
+            );
+          }
         }
       },
     });
