@@ -56,7 +56,6 @@ export default class ChecklistReset extends Plugin {
       id: "checklist-reset",
       name: "Reset checklists",
       checkCallback: (checking: boolean) => {
-        console.log(this.app.workspace.getActiveViewOfType(TextFileView));
         if (checking) {
           return isSupportedView(this.app);
         }

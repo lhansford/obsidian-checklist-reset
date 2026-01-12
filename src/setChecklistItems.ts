@@ -13,7 +13,6 @@ function getDeleteTextOnResetPattern(pattern?: string): string | RegExp | undefi
     return undefined;
   }
   const match = pattern.match(new RegExp('^/(.*?)/([gimy]*)$'));
-  console.log({ pattern, match })
   return match ? new RegExp(match[1], match[2]) : pattern;
 }
 
